@@ -114,7 +114,7 @@ Private Function getValiDict(Optional ByVal fetch_again As Boolean = False)
         Set dict = CreateObject("Scripting.Dictionary")
         
         Dim Json As Object
-        Set Json = JsonConverter.ParseJson(ValiAPI("rest/vali", "GET"))
+        Set Json = JsonConverter.ParseJson(ValiAPI("rest/valis", "GET"))
         
         For Each vali In Json
             vali_id = vali("id")
@@ -224,7 +224,7 @@ Sub RefreshAllValis()
             For Each rCell In valiRange.Cells
                 rCell.FormulaR1C1 = valis(id)(content)
                 If create_links = True Then
-                    ActiveSheet.Hyperlinks.add Anchor:=rCell, Address:=vURL & "/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+                    ActiveSheet.Hyperlinks.add Anchor:=rCell, Address:=vURL & "/valis/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
                 End If
             Next
         End If
@@ -294,7 +294,7 @@ Sub PushValis()
             ValiID = Replace(nms(n).Name, "P_", "")
             ValiValue = Replace(Range(nms(n).RefersTo).Cells, ",", ".")
             Data = "{""formula"":""" & ValiValue & """}"
-            Response = ValiAPI("rest/vali/" & ValiID, "PATCH", Data)
+            Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
             'MsgBox (Response)
             Set JSONResponse = JsonConverter.ParseJson(Response)
             pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"

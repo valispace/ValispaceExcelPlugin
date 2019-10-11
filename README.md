@@ -17,4 +17,4 @@ The source files of the plugin are in the src folder. To contribute to the plugi
 
 ## Version
 
-The current version of the Valispace Excel Plugin is 1.1.
+The current version of the Valispace Excel Plugin is 1.2.
