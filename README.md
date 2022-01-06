@@ -1,6 +1,6 @@
 # Valispace Excel Plugin
 
-To install the Valispace Excel Plugin download the file ValispaceExcelAddon.xlam and follow these instructions:
+To install the Valispace Excel Plugin download the ValispaceExcelAddon.xlam file from the latest [releases](https://github.com/valispace/ValispaceExcelPlugin/releases "ExcelPlugin Releases") and follow these instructions:
 
 1) Store the file in a folder of your choice.  
 2) Open Excel, click on the main menu (or `File` in newer Excel versions) then `Options` --> `Add-Ins` --> Excel-Addins: `Go...`  
