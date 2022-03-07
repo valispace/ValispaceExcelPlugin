@@ -1,7 +1,8 @@
-'Attribute VB_Name = "ValiAddon"
+Attribute VB_Name = "ValiAddon"
 Public id_array() As String
 Public valis As Object
 Public valiUrl As String
+Public projectId As String
 Public username As String
 Public password As String
 Public create_links As Boolean
@@ -14,6 +15,7 @@ Public xobj As Object
 
 Private Sub SetVariables()
     valiUrl = GetSetting("ValiAddon", "Settings", "URL")
+    projectId = GetSetting("ValiAddon", "Settings", "ProjectID")
     username = GetSetting("ValiAddon", "Settings", "User")
     password = GetSetting("ValiAddon", "Settings", "PW")
     create_links = CBool(GetSetting("ValiAddon", "Settings", "LINKS"))
@@ -55,11 +57,11 @@ End Function
 Private Function ValiAPI(Page As String, HttpMethod As String, Optional ByVal Data As String) As String
    
  'On Error GoTo ConnectionFail
-      
+    
     ' login if necessary
     Login
     
-    requestUrl = valiUrl & "/" & Page & "/"
+    requestUrl = valiUrl & "/" & Page
     
     'MsgBox (requestUrl)
     
@@ -114,20 +116,22 @@ Private Function getValiDict(Optional ByVal fetch_again As Boolean = False)
         Set dict = CreateObject("Scripting.Dictionary")
         
         Dim Json As Object
-        Set Json = JsonConverter.ParseJson(ValiAPI("rest/valis", "GET"))
-        
+        Set Json = JsonConverter.ParseJson(ValiAPI("rest/valis/?project=" & projectId, "GET"))
+
         For Each vali In Json
-            vali_id = vali("id")
-            content(0) = vali("name")
-            content(1) = vali("description")
-            content(2) = Replace(vali("value"), ",", ".")
-            content(3) = vali("unit")
-            content(4) = Replace(vali("value"), ",", ".") & " " & vali("unit")
-            content(5) = Replace(vali("margin_plus"), ",", ".") & "%"
-            content(6) = Replace(vali("margin_minus"), ",", ".") & "%"
-            'content(7) = Vali("minimum")
-            'content(8) = Vali("maximum")
-            dict(vali_id) = content
+            If Not (vali("is_part_of_linking_matrix")) Then
+                vali_id = vali("id")
+                content(0) = vali("name")
+                content(1) = vali("project")
+                content(2) = Replace(vali("value"), ",", ".")
+                content(3) = vali("unit")
+                content(4) = Replace(vali("value"), ",", ".") & " " & vali("unit")
+                content(5) = Replace(vali("margin_plus"), ",", ".") & "%"
+                content(6) = Replace(vali("margin_minus"), ",", ".") & "%"
+                'content(7) = Vali("minimum")
+                'content(8) = Vali("maximum")
+                dict(vali_id) = content
+            End If
         Next vali
         
         Set getValiDict = dict
@@ -190,7 +194,7 @@ Sub RefreshAllValis()
     Dim valiRange As Range
     Set valis = getValiDict(True)
     
-    CleanEmptyCells
+    'CleanEmptyCells
     
     Set nms = ActiveWorkbook.Names
     
@@ -297,6 +301,7 @@ Sub PushValis()
             Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
             'MsgBox (Response)
             Set JSONResponse = JsonConverter.ParseJson(Response)
+            MsgBox JSONResponse("name") & JSONResponse("name") & JSONResponse("project")
             pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"
         End If
     Next
@@ -345,3 +350,4 @@ Private Sub CleanEmptyCells()
     
     Next
 End Sub
+

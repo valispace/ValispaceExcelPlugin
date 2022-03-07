@@ -1,12 +1,12 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} SettingsForm 
    Caption         =   "ValiAddon Settings"
-   ClientHeight    =   3045
-   ClientLeft      =   45
-   ClientTop       =   390
-   ClientWidth     =   4770
+   ClientHeight    =   4285
+   ClientLeft      =   50
+   ClientTop       =   395
+   ClientWidth     =   4820
    OleObjectBlob   =   "SettingsForm.frx":0000
-   StartUpPosition =   1  'Fenstermitte
+   StartUpPosition =   1  'CenterOwner
 End
 Attribute VB_Name = "SettingsForm"
 Attribute VB_GlobalNameSpace = False
@@ -15,6 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub UserForm_Initialize()
     Me.TextBox_URL.Text = GetSetting("ValiAddon", "Settings", "URL", "")
+    Me.TextBox_PROJECTID.Text = GetSetting("ValiAddon", "Settings", "ProjectID", "")
     Me.TextBox_USER.Text = GetSetting("ValiAddon", "Settings", "User", "")
     Me.TextBox_PW.Text = GetSetting("ValiAddon", "Settings", "PW", "")
     
@@ -24,6 +25,7 @@ End Sub
 
 Private Sub CommandButton1_Click()
     SaveSetting "ValiAddon", "Settings", "URL", Me.TextBox_URL.Value
+    SaveSetting "ValiAddon", "Settings", "ProjectID", Me.TextBox_PROJECTID.Value
     
     Dim links, cache As Integer
     

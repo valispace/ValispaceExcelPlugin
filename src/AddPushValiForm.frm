@@ -2,11 +2,11 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AddPushValiForm 
    Caption         =   "Add a Vali!"
    ClientHeight    =   600
-   ClientLeft      =   45
-   ClientTop       =   390
+   ClientLeft      =   50
+   ClientTop       =   395
    ClientWidth     =   6960
    OleObjectBlob   =   "AddPushValiForm.frx":0000
-   StartUpPosition =   1  'Fenstermitte
+   StartUpPosition =   1  'CenterOwner
 End
 Attribute VB_Name = "AddPushValiForm"
 Attribute VB_GlobalNameSpace = False
