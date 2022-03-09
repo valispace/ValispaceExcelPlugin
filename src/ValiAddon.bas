@@ -336,6 +336,17 @@ Private Sub CleanEmptyCells()
 
         ' Only clean Vali-generated Names
         If ((Left(nms(n).Name, 2) = "V_") Or (Left(nms(n).Name, 2) = "V.") Or (Left(nms(n).Name, 2) = "P_")) Then
+            invalid_reference = InStr(nms(n).RefersTo, "#REF!")
+            If invalid_reference <> 0 Then
+                If MsgBox("Broken Reference found on " & nms(n).Name & "." & vbNewLine & "Do you want to delete the reference?(Process will not continue if the broken reference persists)", vbYesNo, "Confirm") = vbYes Then
+                    nms(n).Delete
+                    CleanEmptyCells
+                    Exit Sub
+                Else
+                    MsgBox ("Execution Stopped, review the valis and references before refreshing or pushing valis")
+                    End
+                End If
+            End If
             Set valiRange = Range(nms(n).RefersTo)
             For Each rCell In valiRange.Cells
                 If (rCell.FormulaR1C1 = "") Then
