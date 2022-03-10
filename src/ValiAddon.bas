@@ -311,7 +311,6 @@ Sub PushValis()
             Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
             'MsgBox (Response)
             Set JSONResponse = JsonConverter.ParseJson(Response)
-            MsgBox JSONResponse("name") & JSONResponse("name") & JSONResponse("project")
             pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"
         End If
     Next
