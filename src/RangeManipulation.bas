@@ -30,21 +30,21 @@ Function subtractOneArea(Rng1 As Range, inRng2 As Range) As Range
         End If
     Set subtractOneArea = Rslt
 End Function
-    
-    
-    
+
+
+
 Function Subtract(Rng1 As Range, Rng2 As Range) As Range
     On Error Resume Next
     If Application.Intersect(Rng1, Rng2).Address <> Rng2.Address Then _
         Exit Function
     On Error GoTo 0
-    Dim Rslt As Range, Rng1Rslt As Range, J As Integer, I As Integer
+    Dim Rslt As Range, Rng1Rslt As Range, J As Integer, i As Integer
     For J = 1 To Rng1.Areas.Count
         Set Rslt = subtractOneArea(Rng1.Areas(J), Rng2.Areas(1))
-        For I = 2 To Rng2.Areas.Count
+        For i = 2 To Rng2.Areas.Count
             Set Rslt = Application.Intersect( _
-                Rslt, subtractOneArea(Rng1.Areas(J), Rng2.Areas(I)))
-            Next I
+                Rslt, subtractOneArea(Rng1.Areas(J), Rng2.Areas(i)))
+            Next i
         If Rng1Rslt Is Nothing Then
             Set Rng1Rslt = Rslt
         ElseIf Rslt Is Nothing Then
@@ -55,5 +55,5 @@ Function Subtract(Rng1 As Range, Rng2 As Range) As Range
         Next J
     Set Subtract = Rng1Rslt
 End Function
-    
+
 
