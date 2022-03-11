@@ -200,27 +200,28 @@ Sub RefreshAllValis()
     
     Dim valiRange As Range
     Set valis = getValiDict(True)
-    
+    Set refsToDelete = CreateObject("System.Collections.ArrayList")
+
     CleanEmptyCells
-    
+
     Set nms = ActiveWorkbook.Names
-    
+
     vURL = GetSetting("ValiAddon", "Settings", "URL")
-    
+
     Application.ScreenUpdating = False
-    
+
     For n = 1 To nms.Count
         id = Replace(nms(n).Name, "V_", "")
-        
+
         content = 2
         scrtip = ""
-        
+
         If InStr(id, ".margin_plus") Then
             content = 5
             id = Replace(id, ".margin_plus", "")
             scrtip = " --> Margin +"
         End If
-        
+
         If InStr(id, ".margin_minus") Then
             content = 6
             id = Replace(id, ".margin_minus", "")
@@ -228,7 +229,7 @@ Sub RefreshAllValis()
         End If
         
         
-        If valis.Exists(id) Then
+        If valis.Exists(id) And InStr(nms(n).Name, "V_") <> 0 Then
             
             Set valiRange = Range(nms(n).RefersTo)
             
@@ -236,16 +237,45 @@ Sub RefreshAllValis()
             For Each rCell In valiRange.Cells
                 rCell.FormulaR1C1 = valis(id)(content)
                 If create_links = True Then
-                    ActiveSheet.Hyperlinks.add Anchor:=rCell, Address:=vURL & "/valis/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+                    ActiveSheet.Hyperlinks.Add Anchor:=rCell, Address:=vURL & "/valis/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+                End If
+            Next
+        ElseIf Not valis.Exists(id) And InStr(nms(n).Name, "V_") <> 0 Then
+            For Each rCell In Range(nms(n).RefersTo)
+                reference = Replace(nms(n).RefersTo, Left(nms(n).RefersTo, InStr(nms(n).RefersTo, "!")), "")
+                reference = Replace(reference, "$", "")
+                If MsgBox("Refresh Valis Failed: " & vbNewLine & "Vali on cell " & reference & " might have been deleted from Valispace or belongs to another project, retry refresh valis?", vbYesNo, "Confirm") = vbYes Then
+                    'rCell.Delete
+                    RefreshAllValis
+                    Exit Sub
+                Else
+                    If MsgBox("Would you like to remove cell " & reference & "?", vbYesNo, "Confirm") = vbYes Then
+                        rCell.Delete
+                    End If
+                    End
                 End If
             Next
         End If
     Next
     
+    'Deleting Broken refs after deleting the cell(s)
+    DelRefsFromDeletedCells
+
     Application.ScreenUpdating = True
     
 End Sub
-
+Sub DelRefsFromDeletedCells()
+    
+    Set nms = ActiveWorkbook.Names
+    
+    For n = 1 To nms.Count
+        If InStr(nms(n).RefersTo, "#REF!") <> 0 Then
+            nms(n).Delete 'Deleting the invalid (#REF!) name range
+            DelRefsFromDeletedCells 'Restarting Sub because nms.Count changed
+            Exit Sub
+        End If
+    Next
+End Sub
 ' Sub which is called from Ribbon
 Sub CtrlValiSettings(ByVal Control As IRibbonControl)
     ValiSettings
@@ -368,7 +398,7 @@ Private Sub CleanEmptyCells()
                 End If
             Next
         End If
-    
     Next
 End Sub
+
 
