@@ -1,4 +1,5 @@
 Attribute VB_Name = "ValiAddon"
+
 Public id_array() As String
 Public valis As Object
 Public valiUrl As String
@@ -247,12 +248,12 @@ Sub RefreshAllValis()
                 reference = Replace(nms(n).RefersTo, Left(nms(n).RefersTo, InStr(nms(n).RefersTo, "!")), "")
                 reference = Replace(reference, "$", "")
                 If MsgBox("Refresh Valis Failed: " & vbNewLine & "Vali on cell " & reference & " might have been deleted from Valispace or belongs to another project, retry refresh valis?", vbYesNo, "Confirm") = vbYes Then
-                    'rCell.Delete
                     RefreshAllValis
                     Exit Sub
                 Else
-                    If MsgBox("Would you like to remove cell " & reference & "?", vbYesNo, "Confirm") = vbYes Then
-                        rCell.Delete
+                    If MsgBox("Would you like to clear cell " & reference & "?", vbYesNo, "Confirm") = vbYes Then
+                        nms(n).Delete
+                        rCell.ClearContents
                     End If
                     End
                 End If
@@ -401,5 +402,6 @@ Private Sub CleanEmptyCells()
         End If
     Next
 End Sub
+
 
 
