@@ -29,6 +29,12 @@ Private Function Login()
 
     On Error GoTo ConnectionFail
 
+      ' Ignoring Trailing "/" on URL
+      If Right(valiUrl, 1) = "/" Then
+        valiUrl = Left(valiUrl, Len(valiUrl) - 1)
+      End If
+    
+
       oAuthUrl = valiUrl & "/o/token/"
 
       Set xobj = CreateObject("WinHttp.WinHttpRequest.5.1") 'New WinHttp.WinHttpRequest
@@ -61,7 +67,7 @@ Private Function ValiAPI(Page As String, HttpMethod As String, Optional ByVal Da
 
     ' login if necessary
     Login
-
+    
     requestUrl = valiUrl & "/" & Page
 
     'MsgBox (requestUrl)
