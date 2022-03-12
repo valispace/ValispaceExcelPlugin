@@ -252,8 +252,8 @@ Sub RefreshAllValis()
                     Exit Sub
                 Else
                     If MsgBox("Would you like to clear cell " & reference & "?", vbYesNo, "Confirm") = vbYes Then
-                        nms(n).Delete
                         rCell.ClearContents
+                        nms(n).Delete
                     End If
                     End
                 End If
@@ -369,7 +369,7 @@ Private Sub CleanEmptyCells()
     For n = 1 To nms.Count
 
         ' Only clean Vali-generated Names
-        If ((Left(nms(n).Name, 2) = "V_") Or (Left(nms(n).Name, 2) = "V.") Or (Left(nms(n).Name, 2) = "P_")) Then
+        If ((Left(nms(n).Name, 2) = "V_") Or (Left(nms(n).Name, 2) = "P_")) Then
             invalid_reference = InStr(nms(n).RefersTo, "#REF!")
             If invalid_reference <> 0 Then
                 If MsgBox("Broken Reference found on " & nms(n).Name & "." & vbNewLine & "Do you want to delete the reference?(Process will not continue if the broken reference persists)", vbYesNo, "Confirm") = vbYes Then
