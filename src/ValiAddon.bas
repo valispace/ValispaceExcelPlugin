@@ -1,4 +1,5 @@
 Attribute VB_Name = "ValiAddon"
+
 Public id_array() As String
 Public valis As Object
 Public valiUrl As String
@@ -27,6 +28,12 @@ Private Function Login()
     SetVariables
 
     On Error GoTo ConnectionFail
+
+      ' Ignoring Trailing "/" on URL
+      If Right(valiUrl, 1) = "/" Then
+        valiUrl = Left(valiUrl, Len(valiUrl) - 1)
+      End If
+    
 
       oAuthUrl = valiUrl & "/o/token/"
 
@@ -60,7 +67,7 @@ Private Function ValiAPI(Page As String, HttpMethod As String, Optional ByVal Da
 
     ' login if necessary
     Login
-
+    
     requestUrl = valiUrl & "/" & Page
 
     'MsgBox (requestUrl)
@@ -134,7 +141,6 @@ Private Function getValiDict(Optional ByVal fetch_again As Boolean = False)
                     content(7) = Replace(vali("path"), Left(vali("path"), name_index - 1), Project("name"))
                 Else
                     content(7) = Project("name") & "." & vali("path")
-                    Debug.Print content(7)
                 End If
                 'content(7) = Vali("minimum")
                 'content(8) = Vali("maximum")
@@ -202,7 +208,9 @@ Sub RefreshAllValis()
     Dim valiRange As Range
     Set valis = getValiDict(True)
 
-    'CleanEmptyCells
+    Set refsToDelete = CreateObject("System.Collections.ArrayList")
+
+    CleanEmptyCells
 
     Set nms = ActiveWorkbook.Names
 
@@ -229,23 +237,54 @@ Sub RefreshAllValis()
         End If
 
 
-        If valis.Exists(id) Then
+
+        If valis.Exists(id) And InStr(nms(n).Name, "V_") <> 0 Then
+
             Set valiRange = Range(nms(n).RefersTo)
 
             'update the "V_xxx" fields
             For Each rCell In valiRange.Cells
                 rCell.FormulaR1C1 = valis(id)(content)
                 If create_links = True Then
-                    ActiveSheet.Hyperlinks.add Anchor:=rCell, Address:=vURL & "/valis/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+                    ActiveSheet.Hyperlinks.Add Anchor:=rCell, Address:=vURL & "/valis/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+                End If
+            Next
+        ElseIf Not valis.Exists(id) And InStr(nms(n).Name, "V_") <> 0 Then
+            For Each rCell In Range(nms(n).RefersTo)
+                reference = Replace(nms(n).RefersTo, Left(nms(n).RefersTo, InStr(nms(n).RefersTo, "!")), "")
+                reference = Replace(reference, "$", "")
+                If MsgBox("Refresh Valis Failed: " & vbNewLine & "Vali on cell " & reference & " might have been deleted from Valispace or belongs to another project, retry refresh valis?", vbYesNo, "Confirm") = vbYes Then
+                    RefreshAllValis
+                    Exit Sub
+                Else
+                    If MsgBox("Would you like to clear cell " & reference & "?", vbYesNo, "Confirm") = vbYes Then
+                        rCell.ClearContents
+                        nms(n).Delete
+                    End If
+                    End
                 End If
             Next
         End If
     Next
 
+    'Deleting Broken refs after deleting the cell(s)
+    DelRefsFromDeletedCells
+
     Application.ScreenUpdating = True
 
 End Sub
+Sub DelRefsFromDeletedCells()
 
+    Set nms = ActiveWorkbook.Names
+
+    For n = 1 To nms.Count
+        If InStr(nms(n).RefersTo, "#REF!") <> 0 Then
+            nms(n).Delete 'Deleting the invalid (#REF!) name range
+            DelRefsFromDeletedCells 'Restarting Sub because nms.Count changed
+            Exit Sub
+        End If
+    Next
+End Sub
 ' Sub which is called from Ribbon
 Sub CtrlValiSettings(ByVal Control As IRibbonControl)
     ValiSettings
@@ -301,6 +340,8 @@ Sub PushValis()
     Set nms = ActiveWorkbook.Names
     Dim JSONResponse As Object
 
+    'Fixing Name Range when Cells|Rows|Columns are deleted, removing broken references
+    CleanEmptyCells
     For n = 1 To nms.Count
         If Left(nms(n).Name, 2) = "P_" Then 'find all fields which are ready for push
             ValiID = Replace(nms(n).Name, "P_", "")
@@ -309,7 +350,6 @@ Sub PushValis()
             Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
             'MsgBox (Response)
             Set JSONResponse = JsonConverter.ParseJson(Response)
-            MsgBox JSONResponse("name") & JSONResponse("name") & JSONResponse("project")
             pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"
         End If
     Next
@@ -335,7 +375,18 @@ Private Sub CleanEmptyCells()
     For n = 1 To nms.Count
 
         ' Only clean Vali-generated Names
-        If ((Left(nms(n).Name, 2) = "V_") Or (Left(nms(n).Name, 2) = "V.") Or (Left(nms(n).Name, 2) = "P_")) Then
+        If ((Left(nms(n).Name, 2) = "V_") Or (Left(nms(n).Name, 2) = "P_")) Then
+            invalid_reference = InStr(nms(n).RefersTo, "#REF!")
+            If invalid_reference <> 0 Then
+                If MsgBox("Broken Reference found on " & nms(n).Name & "." & vbNewLine & "Do you want to delete the reference?(Process will not continue if the broken reference persists)", vbYesNo, "Confirm") = vbYes Then
+                    nms(n).Delete
+                    CleanEmptyCells
+                    Exit Sub
+                Else
+                    MsgBox ("Execution Stopped, review the valis and references before refreshing or pushing valis")
+                    End
+                End If
+            End If
             Set valiRange = Range(nms(n).RefersTo)
             For Each rCell In valiRange.Cells
                 If (rCell.FormulaR1C1 = "") Then
@@ -355,7 +406,8 @@ Private Sub CleanEmptyCells()
                 End If
             Next
         End If
-
     Next
 End Sub
+
+
 

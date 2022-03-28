@@ -1,10 +1,10 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AddPushValiForm
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AddPushValiForm 
    Caption         =   "Add a Vali!"
-   ClientHeight    =   735
+   ClientHeight    =   732
    ClientLeft      =   0
-   ClientTop       =   150
-   ClientWidth     =   7185
+   ClientTop       =   156
+   ClientWidth     =   7188
    OleObjectBlob   =   "AddPushValiForm.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -18,25 +18,25 @@ Private Sub CommandButton1_Click()
 ' Add a Vali
     vURL = GetSetting("ValiAddon", "Settings", "URL")
     create_links = GetSetting("ValiAddon", "Settings", "LINKS")
-
+    
     Dim found As Boolean
     Dim valiRange As Range
-
+    
     Set nms = ActiveWorkbook.Names
-
+    
     're-create the vali-id from the combobox-id
-    Dim id, autoname, autoid As String
-
+    Dim id, autoid As String
+    
     id = id_array(Me.ComboBox1.ListIndex)
     autoid = "P_" & id
+    
 
-
-    nms.add Name:=autoid, RefersTo:=ActiveCell
-
+    nms.Add Name:=autoid, RefersTo:=ActiveCell
+        
     If create_links = True Then
-        ActiveSheet.Hyperlinks.add Anchor:=Selection, Address:=vURL & "/vali/" & id & "/", ScreenTip:=valis(id)(0)
+        ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:=vURL & "/vali/" & id & "/", ScreenTip:=valis(id)(0)
     End If
-
+    
     Me.Hide
-
+    
 End Sub
