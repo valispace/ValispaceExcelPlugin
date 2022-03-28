@@ -30,9 +30,9 @@ Function subtractOneArea(Rng1 As Range, inRng2 As Range) As Range
         End If
     Set subtractOneArea = Rslt
 End Function
-    
-    
-    
+
+
+
 Function Subtract(Rng1 As Range, Rng2 As Range) As Range
     On Error Resume Next
     If Application.Intersect(Rng1, Rng2).Address <> Rng2.Address Then _
@@ -55,5 +55,5 @@ Function Subtract(Rng1 As Range, Rng2 As Range) As Range
         Next J
     Set Subtract = Rng1Rslt
 End Function
-    
+
 

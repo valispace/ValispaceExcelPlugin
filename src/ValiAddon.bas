@@ -136,6 +136,7 @@ Private Function getValiDict(Optional ByVal fetch_again As Boolean = False)
                 content(5) = Replace(vali("margin_plus"), ",", ".") & "%"
                 content(6) = Replace(vali("margin_minus"), ",", ".") & "%"
                 content(7) = vali("path")
+                ' Commented out because it's not clear if this was really needed, will leave it here, shouold the need to use it arise
                 'If name_index Then
                 '    content(7) = Replace(vali("path"), Left(vali("path"), name_index - 1), Project("name"))
                 'Else
@@ -407,6 +408,3 @@ Private Sub CleanEmptyCells()
         End If
     Next
 End Sub
-
-
-

@@ -1,5 +1,5 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AddValiForm 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AddValiForm
    Caption         =   "Add a Vali!"
    ClientHeight    =   2064
    ClientLeft      =   0
@@ -20,22 +20,22 @@ If Me.ComboBox1.ListIndex = -1 Then
     MsgBox ("Please Select one of the options.")
     Me.ComboBox1.SetFocus
 Else
-    
+
 
 
 ' Add a Vali
     vURL = GetSetting("ValiAddon", "Settings", "URL")
     create_links = GetSetting("ValiAddon", "Settings", "LINKS")
-    
+
     Dim found As Boolean
     Dim valiRange As Range
-    
+
     Set nms = ActiveWorkbook.Names
-    
+
     're-create the vali-id from the combobox-id
     Dim id, autoid, vali_comment, extension, scrtip As String
     Dim content As Integer
-    
+
     If Me.OptionValue = True Then
         extension = ""
         content = 2
@@ -49,13 +49,13 @@ Else
         content = 6
         scrtip = " --> Margin -"
     End If
-    
+
     id = id_array(Me.ComboBox1.ListIndex)
     autoid = "V_" & id & extension
     vali_comment = valis(id)(7)
-    
+
     found = False
-    
+
     For n = 1 To nms.Count
         If nms(n).Name = autoid Then ' Name already existed --> update ID-cell-range, so that all values get updated when refreshed; leave named cell, so that it can be accessed in formulas
             found = True
@@ -67,7 +67,7 @@ Else
             Next
         End If
     Next
-    
+
     If found = False Then ' Name is new --> create both, named cell ID-cell: "V_123"
         nms.Add Name:=autoid, RefersTo:=ActiveCell
         For n = 1 To nms.Count
@@ -77,13 +77,13 @@ Else
         Next
         ActiveCell.Formula = valis(id)(content)
     End If
-    
+
     If create_links = True Then
         ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:=vURL & "/components/properties/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
     End If
-    
+
     Me.Hide
-    
+
 End If
-    
+
 End Sub
