@@ -3,7 +3,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AddValiForm
    Caption         =   "Add a Vali!"
    ClientHeight    =   2064
    ClientLeft      =   0
-   ClientTop       =   156
+   ClientTop       =   150
    ClientWidth     =   7560
    OleObjectBlob   =   "AddValiForm.frx":0000
    StartUpPosition =   1  'CenterOwner
@@ -79,7 +79,7 @@ Else
     End If
     
     If create_links = True Then
-        ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:=vURL & "/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+        ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:=vURL & "/components/properties/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
     End If
     
     Me.Hide

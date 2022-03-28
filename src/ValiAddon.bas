@@ -28,12 +28,11 @@ Private Function Login()
     SetVariables
 
     On Error GoTo ConnectionFail
-
-      ' Ignoring Trailing "/" on URL
+    
+      'Ignoring Trailing "/" on URL
       If Right(valiUrl, 1) = "/" Then
         valiUrl = Left(valiUrl, Len(valiUrl) - 1)
       End If
-    
 
       oAuthUrl = valiUrl & "/o/token/"
 
@@ -67,7 +66,7 @@ Private Function ValiAPI(Page As String, HttpMethod As String, Optional ByVal Da
 
     ' login if necessary
     Login
-    
+
     requestUrl = valiUrl & "/" & Page
 
     'MsgBox (requestUrl)
@@ -136,12 +135,12 @@ Private Function getValiDict(Optional ByVal fetch_again As Boolean = False)
                 content(4) = Replace(vali("value"), ",", ".") & " " & vali("unit")
                 content(5) = Replace(vali("margin_plus"), ",", ".") & "%"
                 content(6) = Replace(vali("margin_minus"), ",", ".") & "%"
-                name_index = Int(InStr(vali("path"), "."))
-                If name_index Then
-                    content(7) = Replace(vali("path"), Left(vali("path"), name_index - 1), Project("name"))
-                Else
-                    content(7) = Project("name") & "." & vali("path")
-                End If
+                content(7) = vali("path")
+                'If name_index Then
+                '    content(7) = Replace(vali("path"), Left(vali("path"), name_index - 1), Project("name"))
+                'Else
+                '    content(7) = Project("name") & "." & vali("path")
+                'End If
                 'content(7) = Vali("minimum")
                 'content(8) = Vali("maximum")
                 dict(vali_id) = content
@@ -185,7 +184,7 @@ Sub InsertVali()
 
     ' save the correct keys in the right order for the dropdown-field in AddValiForm
     For i = 0 To valis.Count - 1
-        id_array(i) = valis.keys()(i)
+        id_array(i) = valis.Keys()(i)
         str = v_items(i)(0) & " (" & v_items(i)(4) & ")"
         AddValiForm.ComboBox1.AddItem str, i
     Next i
@@ -246,7 +245,7 @@ Sub RefreshAllValis()
             For Each rCell In valiRange.Cells
                 rCell.FormulaR1C1 = valis(id)(content)
                 If create_links = True Then
-                    ActiveSheet.Hyperlinks.Add Anchor:=rCell, Address:=vURL & "/valis/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+                    ActiveSheet.Hyperlinks.Add Anchor:=rCell, Address:=vURL & "/components/properties/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
                 End If
             Next
         ElseIf Not valis.Exists(id) And InStr(nms(n).Name, "V_") <> 0 Then
@@ -318,7 +317,7 @@ Sub AddPushVali()
 
     ' save the correct keys in the right order for the dropdown-field in AddValiForm
     For i = 0 To valis.Count - 1
-        id_array(i) = valis.keys()(i)
+        id_array(i) = valis.Keys()(i)
         str = v_items(i)(0)
         AddPushValiForm.ComboBox1.AddItem str, i
     Next i
@@ -354,7 +353,7 @@ Sub PushValis()
         End If
     Next
 
-    UpdatedValis = pushDict.keys
+    UpdatedValis = pushDict.Keys
     Message = "Uploaded the following values to Valispace" & vbNewLine & vbNewLine
     Dim i
     For i = 0 To pushDict.Count - 1
