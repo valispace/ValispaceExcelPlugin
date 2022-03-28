@@ -1,0 +1,63 @@
+# This is a basic workflow to build the  container automatically
+
+name: Build
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request events but only for the master branch
+#   pull_request:
+#     branches: [ master ]
+  push:
+    branches: 
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+env:
+  EXCEL_ADDON_XLAM: "./ValispaceExcelAddon.xlam"
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    steps:
+        
+      # Checks-out your repository under $GITHUB_WORKSPACE, so the job can access it
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      # Gets the version from the previous tag
+      - name: Git Version
+        uses: codacy/git-version@2.2.0
+        id: generate-version
+        with:
+          prefix: v
+      - name: Echo v
+        run: |
+          echo $version
+          echo $previous-version
+                   
+#       - name: Create release
+#         uses: actions/create-release@v1
+#         id: create_release
+# #         if: github.ref == 'refs/heads/master'
+#         with:
+#           draft: false
+#           prerelease: false
+#           release_name: ${{ steps.generate-version.outputs.version }}
+#           tag_name: ${{ steps.generate-version.outputs.version }}
+#         env:
+#           GITHUB_TOKEN: ${{ github.token }}
+          
+#       - name: Upload artifact
+#         uses: actions/upload-release-asset@v1
+# #         if: github.ref == 'refs/heads/master'
+#         env:
+#           GITHUB_TOKEN: ${{ github.token }}
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }}
+#           asset_path: ${{ env.tar_file }}
+#           asset_name: ${{ env.tar_file }}
+#           asset_content_type: application/gzip
