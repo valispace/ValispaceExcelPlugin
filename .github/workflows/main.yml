@@ -12,7 +12,7 @@ on:
       - master
 
   # Allows you to run this workflow manually from the Actions tab
-#   workflow_dispatch:
+  workflow_dispatch:
   
 env:
   EXCEL_ADDON_XLAM: "./ValispaceExcelAddon.xlam"
