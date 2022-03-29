@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} AddValiForm
    Caption         =   "Add a Vali!"
-   ClientHeight    =   2064
+   ClientHeight    =   2070
    ClientLeft      =   0
    ClientTop       =   150
    ClientWidth     =   7560
@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Private Sub CommandButton1_Click()
 
 ' If user wrote bullshit, stop him
@@ -79,7 +80,7 @@ Else
     End If
 
     If create_links = True Then
-        ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:=vURL & "/components/properties/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+        ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:=vURL & "/project/" & valis(id)(1) & "/components/properties/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
     End If
 
     Me.Hide

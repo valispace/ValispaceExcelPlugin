@@ -132,11 +132,10 @@ Private Function getValiDict(Optional ByVal fetch_again As Boolean = False)
                 content(1) = vali("project")
                 content(2) = Replace(vali("value"), ",", ".")
                 content(3) = vali("unit")
-                content(4) = Replace(vali("value"), ",", ".") & " " & vali("unit")
+                content(4) = content(2) & " " & content(3)
                 content(5) = Replace(vali("margin_plus"), ",", ".") & "%"
                 content(6) = Replace(vali("margin_minus"), ",", ".") & "%"
                 content(7) = vali("path")
-                ' Commented out because it's not clear if this was really needed, will leave it here, shouold the need to use it arise
                 'If name_index Then
                 '    content(7) = Replace(vali("path"), Left(vali("path"), name_index - 1), Project("name"))
                 'Else
@@ -246,7 +245,7 @@ Sub RefreshAllValis()
             For Each rCell In valiRange.Cells
                 rCell.FormulaR1C1 = valis(id)(content)
                 If create_links = True Then
-                    ActiveSheet.Hyperlinks.Add Anchor:=rCell, Address:=vURL & "/components/properties/vali/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
+                    ActiveSheet.Hyperlinks.Add Anchor:=rCell, Address:=vURL & "/project/" & valis(id)(1) & "/components/valis/" & id & "/", ScreenTip:=valis(id)(0) & ": " & valis(id)(4) & scrtip
                 End If
             Next
         ElseIf Not valis.Exists(id) And InStr(nms(n).Name, "V_") <> 0 Then

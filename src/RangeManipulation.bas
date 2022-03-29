@@ -55,5 +55,3 @@ Function Subtract(Rng1 As Range, Rng2 As Range) As Range
         Next J
     Set Subtract = Rng1Rslt
 End Function
-
-

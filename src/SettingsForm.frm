@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} SettingsForm
    Caption         =   "ValiAddon Settings"
-   ClientHeight    =   4284
+   ClientHeight    =   4290
    ClientLeft      =   0
    ClientTop       =   150
    ClientWidth     =   5205
@@ -40,5 +40,3 @@ Private Sub CommandButton1_Click()
 
     Me.Hide
 End Sub
-
-
