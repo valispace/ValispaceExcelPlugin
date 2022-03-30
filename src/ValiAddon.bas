@@ -207,8 +207,6 @@ Sub RefreshAllValis()
     Dim valiRange As Range
     Set valis = getValiDict(True)
 
-    Set refsToDelete = CreateObject("System.Collections.ArrayList")
-
     CleanEmptyCells
 
     Set nms = ActiveWorkbook.Names
@@ -407,3 +405,6 @@ Private Sub CleanEmptyCells()
         End If
     Next
 End Sub
+
+
+
