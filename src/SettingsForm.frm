@@ -40,5 +40,3 @@ Private Sub CommandButton1_Click()
 
     Me.Hide
 End Sub
-
-
