@@ -28,7 +28,7 @@ Private Function Login()
     SetVariables
 
     On Error GoTo ConnectionFail
-    
+
       'Ignoring Trailing "/" on URL
       If Right(valiUrl, 1) = "/" Then
         valiUrl = Left(valiUrl, Len(valiUrl) - 1)
@@ -342,12 +342,14 @@ Sub PushValis()
     For n = 1 To nms.Count
         If Left(nms(n).Name, 2) = "P_" Then 'find all fields which are ready for push
             ValiID = Replace(nms(n).Name, "P_", "")
-            ValiValue = Replace(Range(nms(n).RefersTo).Cells, ",", ".")
-            Data = "{""formula"":""" & ValiValue & """}"
-            Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
-            'MsgBox (Response)
-            Set JSONResponse = JsonConverter.ParseJson(Response)
-            pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"
+            If valis.Exists(ValiID) Then
+                ValiValue = Replace(Range(nms(n).RefersTo).Cells, ",", ".")
+                Data = "{""formula"":""" & ValiValue & """}"
+                Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
+                'MsgBox (Response)
+                Set JSONResponse = JsonConverter.ParseJson(Response)
+                pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"
+            End If
         End If
     Next
 
