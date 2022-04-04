@@ -32,7 +32,11 @@ Private Sub CommandButton1_Click()
 
 
     nms.Add Name:=autoid, RefersTo:=ActiveCell
-
+    For n = 1 To nms.Count
+        If nms(n).Name = autoid Then
+            nms(n).Comment = Me.ComboBox1.Value
+        End If
+    Next
     If create_links = True Then
         ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:=vURL & "/project/" & valis(id)(1) & "/components/properties/vali/" & id & "/", ScreenTip:=valis(id)(0)
     End If
