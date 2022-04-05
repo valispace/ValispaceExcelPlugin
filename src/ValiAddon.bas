@@ -28,7 +28,7 @@ Private Function Login()
     SetVariables
 
     On Error GoTo ConnectionFail
-
+    
       'Ignoring Trailing "/" on URL
       If Right(valiUrl, 1) = "/" Then
         valiUrl = Left(valiUrl, Len(valiUrl) - 1)
@@ -364,7 +364,7 @@ Sub PushValis()
     For i = 0 To pushDict.Count - 1
         uploadedMessage = uploadedMessage & UpdatedValis(i) & ": " & vbTab & pushDict(UpdatedValis(i)) & vbNewLine
     Next
-
+    
     failedValis = failedDict.Keys
     failedMessage = "Failed to upload the following values to Valispace because they belong to another project" & vbNewLine & vbNewLine
     Dim u
@@ -372,8 +372,13 @@ Sub PushValis()
         failedMessage = failedMessage & failedValis(u) & ": " & vbTab & failedDict(failedValis(u)) & vbNewLine
     Next
 
-    MsgBox (uploadedMessage)
-    MsgBox (failedMessage)
+    If pushDict.Count > 0 Then
+        MsgBox (uploadedMessage)
+    End If
+
+    If failedDict.Count > 0 Then
+        MsgBox (failedMessage)
+    End If
 End Sub
 
 Private Sub CleanEmptyCells()
