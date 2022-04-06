@@ -333,6 +333,7 @@ Sub PushValis()
     Set valis = getValiDict(Not cache_valis)
 
     Set pushDict = CreateObject("Scripting.Dictionary")
+    Set failedDict = CreateObject("Scripting.Dictionary")
 
     Set nms = ActiveWorkbook.Names
     Dim JSONResponse As Object
@@ -342,24 +343,42 @@ Sub PushValis()
     For n = 1 To nms.Count
         If Left(nms(n).Name, 2) = "P_" Then 'find all fields which are ready for push
             ValiID = Replace(nms(n).Name, "P_", "")
-            ValiValue = Replace(Range(nms(n).RefersTo).Cells, ",", ".")
-            Data = "{""formula"":""" & ValiValue & """}"
-            Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
-            'MsgBox (Response)
-            Set JSONResponse = JsonConverter.ParseJson(Response)
-            pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"
+            If valis.Exists(ValiID) Then
+                Valivalue = Replace(Range(nms(n).RefersTo).Cells, ",", ".")
+                Data = "{""formula"":""" & Valivalue & """}"
+                Response = ValiAPI("rest/valis/" & ValiID, "PATCH", Data)
+                'MsgBox (Response)
+                Set JSONResponse = JsonConverter.ParseJson(Response)
+                pushDict(JSONResponse("name")) = JSONResponse("value") & " " & JSONResponse("unit") & vbTab & "(before: " & valis(ValiID)(4) & ")"
+            Else
+                Valivalue = Replace(Range(nms(n).RefersTo).Cells, ",", ".")
+                Data = "{""formula"":""" & Valivalue & """}"
+                failedDict(nms(n).Comment) = Valivalue
+            End If
         End If
     Next
 
     UpdatedValis = pushDict.Keys
-    Message = "Uploaded the following values to Valispace" & vbNewLine & vbNewLine
+    uploadedMessage = "Uploaded the following values to Valispace" & vbNewLine & vbNewLine
     Dim i
     For i = 0 To pushDict.Count - 1
-        Message = Message & UpdatedValis(i) & ": " & vbTab & pushDict(UpdatedValis(i)) & vbNewLine
+        uploadedMessage = uploadedMessage & UpdatedValis(i) & ": " & vbTab & pushDict(UpdatedValis(i)) & vbNewLine
+    Next
+    
+    failedValis = failedDict.Keys
+    failedMessage = "Failed to upload the following values to Valispace because they belong to another project" & vbNewLine & vbNewLine
+    Dim u
+    For u = 0 To failedDict.Count - 1
+        failedMessage = failedMessage & failedValis(u) & ": " & vbTab & failedDict(failedValis(u)) & vbNewLine
     Next
 
-    MsgBox (Message)
+    If pushDict.Count > 0 Then
+        MsgBox (uploadedMessage)
+    End If
 
+    If failedDict.Count > 0 Then
+        MsgBox (failedMessage)
+    End If
 End Sub
 
 Private Sub CleanEmptyCells()
