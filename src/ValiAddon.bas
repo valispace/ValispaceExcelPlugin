@@ -28,7 +28,7 @@ Private Function Login()
     SetVariables
 
     On Error GoTo ConnectionFail
-    
+
       'Ignoring Trailing "/" on URL
       If Right(valiUrl, 1) = "/" Then
         valiUrl = Left(valiUrl, Len(valiUrl) - 1)
@@ -136,6 +136,7 @@ Private Function getValiDict(Optional ByVal fetch_again As Boolean = False)
                 content(5) = Replace(vali("margin_plus"), ",", ".") & "%"
                 content(6) = Replace(vali("margin_minus"), ",", ".") & "%"
                 content(7) = vali("path")
+                content(8) = vali_id
                 'If name_index Then
                 '    content(7) = Replace(vali("path"), Left(vali("path"), name_index - 1), Project("name"))
                 'Else
@@ -185,7 +186,7 @@ Sub InsertVali()
     ' save the correct keys in the right order for the dropdown-field in AddValiForm
     For i = 0 To valis.Count - 1
         id_array(i) = valis.Keys()(i)
-        str = v_items(i)(0) & " (" & v_items(i)(4) & ")"
+        str = v_items(i)(0) & " [ID:" & v_items(i)(8) & "] " & " (" & v_items(i)(4) & ")"
         AddValiForm.ComboBox1.AddItem str, i
     Next i
 
@@ -364,7 +365,7 @@ Sub PushValis()
     For i = 0 To pushDict.Count - 1
         uploadedMessage = uploadedMessage & UpdatedValis(i) & ": " & vbTab & pushDict(UpdatedValis(i)) & vbNewLine
     Next
-    
+
     failedValis = failedDict.Keys
     failedMessage = "Failed to upload the following values to Valispace because they belong to another project" & vbNewLine & vbNewLine
     Dim u
