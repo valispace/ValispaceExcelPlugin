@@ -84,7 +84,7 @@ Private Function ValiAPI(Page As String, HttpMethod As String, Optional ByVal Da
 
     xobj.SetRequestHeader "Authorization", token
     If Data = "" Then 'IsMissing(Data) Then
-        xobj.SetRequestHeader "Content-Type", "application/x-www-form-urlencoded"
+        xobj.SetRequestHeader "Content-Type", "application/json"
         xobj.Send
     Else
         xobj.SetRequestHeader "Content-Type", "application/json"
